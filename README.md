@@ -1,3 +1,3 @@
 # ProjectPlan
 
-Some codes for generating Plans.
+Some simple codes to generate project plans.
