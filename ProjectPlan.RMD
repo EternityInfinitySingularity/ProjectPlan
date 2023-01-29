@@ -1,0 +1,102 @@
+---
+title: "Project Plan"
+output: html_document
+date: "2023-01-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+library(googleVis)
+datTL <- data.frame(Position = c(rep("Project1", 3), rep("Project2", 3)),
+                    Name = c("Task1", "Task2", "Task3",
+                           "Task4", "Task5", "Task6"),
+                    start = as.Date(x = rep(c("2023-03-29", "2023-06-03", 
+                                          "2023-09-03"),2)),
+                    end = as.Date(x = rep(c("2023-06-03", "2023-07-03", 
+                                        "2023-12-03"),2)))
+
+Timeline <- gvisTimeline(data = datTL, chartid = "default", rowlabel = "Name", barlabel = "Position", start = "start", end = "end", options = list(timeline = "{groupByRowLabel:false}", backgroundColor = '#ffd', height = 350, colors = "['#cbb69d', '#603913', '#c69c6e']"))
+plot(Timeline)
+```
+
+```{r, echo=FALSE}
+library(timevis)
+
+data <- data.frame(
+  id      = 1:4,
+  content = c("Item one"  , "Item two"  ,"Ranged item", "Item four"),
+  start   = c("2023-01-10", "2023-01-11", "2023-01-20", "2023-02-14 15:00:00"),
+  end     = c(NA          ,           NA, "2023-02-04", NA)
+)
+
+timevis(data)
+
+```
+
+
+```{r, echo=FALSE}
+# install.packages("remotes")
+# remotes::install_github("giocomai/ganttrify")
+project <- data.frame(
+  c("WP1. Project A", "WP1. Project A", "WP1. Project A", "WP2. Project B", "WP2. Project B", "WP2. Project B"),
+  c("1.1. Task A", "1.2. Task B", "1.3. Task C", "2.1. Task A", "2.2. Task B", "2.3. Task C"),
+  c("2023-07-01", "2023-07-13", "2023-07-01", "2023-07-01", "2023-07-13", "2023-07-27"),
+  c("2023-07-10", "2023-08-21", "2023-07-28", "2023-07-10", "2023-07-24", "2023-08-14")
+)
+colnames(project) = c("wp", "activity", "start_date", "end_date")
+ganttrify(project = project, by_date = TRUE, exact_date = TRUE, month_number = TRUE)
+
+```
+
+
+```{r, echo=FALSE}
+library(plotly)
+## GanttChart.csv-------
+# Task,Start,Duration,Resource
+# Task 1,1/1/2023,50,A
+# Task 2,2/20/2023,25,B
+# Task 3,1/1/2023,100,C
+# Task 4,4/10/2023,60,C
+# Task 5,6/9/2023,30,C
+# Task 6,4/10/2023,150,A
+# Task 7,9/7/2023,80,B
+# Task 8,11/26/2023,10,B
+df <- read.csv("https://cdn.rawgit.com/plotly/datasets/master/GanttChart-updated.csv", 
+               stringsAsFactors = F)
+#df <- read.csv("GanttChart.csv", stringsAsFactors = F)
+
+df$Start  <- as.Date(df$Start, format = "%m/%d/%Y")
+client    <- "Sample Client"
+cols      <- RColorBrewer::brewer.pal(length(unique(df$Resource)), name = "Set3")
+df$color  <- factor(df$Resource, labels = cols)
+
+p <- plot_ly()
+for(i in 1:(nrow(df) - 1)){
+  p <- add_trace(p,
+                 x = c(df$Start[i], df$Start[i] + df$Duration[i]), 
+                 y = c(i, i), 
+                 mode = "lines",
+                 line = list(color = df$color[i], width = 20),
+                 showlegend = F,
+                 hoverinfo = "text",
+                 text = paste("Task: ", df$Task[i], "<br>",
+                              "Duration: ", df$Duration[i], "days<br>",
+                              "Resource: ", df$Resource[i]),
+                 evaluate = T
+  )
+}
+
+p
+```
+
+
+```{r, echo=FALSE}
+demo(googleVis)
+## For other demos see
+demo(package='googleVis')
+
+```
+
